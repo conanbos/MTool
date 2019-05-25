@@ -36,6 +36,8 @@ class DndHandler:
         widget.bind("<Motion>", self.on_motion)
         widget['cursor'] = "hand2"
 
+
+
     def __del__(self):
         root = self.root
         self.root = None
@@ -179,12 +181,15 @@ class object_item:
         x1, y1, x2, y2 = source.canvas.bbox(source.id)
         dx, dy = x2-x1, y2-y1
         self.dndid = self.canvas.create_rectangle(x, y, x+dx, y+dy)
+        #self.canvas.create_line(x+20, y+20, 200,150, dash=2, arrow="last")断点
         self.dnd_motion(source, event)
 
     def dnd_motion(self, source, event):
         x, y = source.where(self.canvas, event)
         x1, y1, x2, y2 = self.canvas.bbox(self.dndid)
         self.canvas.move(self.dndid, x-x1, y-y1)
+
+
 
     def dnd_leave(self, source, event):
         #self.top.focus_set() # Hide highlight border
