@@ -181,7 +181,7 @@ class object_item:
         x1, y1, x2, y2 = source.canvas.bbox(source.id)
         dx, dy = x2-x1, y2-y1
         self.dndid = self.canvas.create_rectangle(x, y, x+dx, y+dy)
-        #self.canvas.create_line(x+20, y+20, 200,150, dash=2, arrow="last")断点
+        #self.canvas.create_line(x+20, y+20, 200,150, dash=2, arrow="last")#断点继续
         self.dnd_motion(source, event)
 
     def dnd_motion(self, source, event):
