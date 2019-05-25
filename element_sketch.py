@@ -96,21 +96,11 @@ def lanch(root_app):
     print("relation:%d", relation_pair)
     print("object position:%d", obj_position)
 
-    tt=relationship(app.cv_dest)
     for i in range(len(relation_pair)):
-        if i<2:
+        if i < 2:
             tt = relationship(app.cv_src)
             tt.draw_line(i)
         else:
             tt = relationship(app.cv_dest)
             tt.draw_line(i)
 
-# main programm
-root = Tk()
-root.title("Model Combination Tool")
-root.iconbitmap('icons.ico')
-size= str(WIN_WIDTH)+'x'+str(WIN_HEIGHT)+'+100+10'
-root.geometry(size)
-root.resizable(0, 0)
-lanch(root)
-root.mainloop()
