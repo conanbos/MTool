@@ -14,8 +14,8 @@ import tkinter
 
 obj_list = []  # list of created objects [name,type,canvas,x,y,x2,y2] type: 1 element
 line_list = [] # list of created line [id(x+y),type,canvas,id,x,y,x2,y2] type:0 line
-lines_temp = [] # save temp lines for movement
-templine= []
+lines_temp_from = [] # save temp lines which are from the related object for movement
+lines_temp_to = [] # save temp lines which link to the related object for movement
 
 
 
@@ -159,12 +159,8 @@ class object_icon:
             self.x_orig, self.y_orig = self.canvas.coords(self.id)
             print("press: orig:",self.x_orig,self.y_orig,self.x_off,self.y_off)
             #print("name=%s, id=%s"%(self.name,obj_dic.get(str(self.canvas)+self.name)))
-            self.get_line_group(self.name)
-            print("linetemp:",lines_temp)
-            for i in range(len(lines_temp)):
-                #print(lines_temp[i][3])
-                self.canvas.delete(lines_temp[i][3])
-            #
+            relationship.get_line_group(self,self.name) # get related lines 点击对像时就一次性获取所有关联线条
+
 
     def move(self, event):
         x, y = self.where(self.canvas, event)
@@ -187,21 +183,6 @@ class object_icon:
     def dnd_end(self, target, event):
         pass
 
-    def get_line_group(self,element_id):
-        lines_temp.clear()
-        print(obj_list)
-        for i in range(len(obj_list)):
-            if (obj_list[i][0] == element_id) and (obj_list[i][1] == 1):
-                from_this_x = obj_list[i][3] +20
-                from_this_y = obj_list[i][4] +10
-                to_this_x = obj_list[i][5] +20
-                to_this_y = obj_list[i][6] +10
-                from_this = str(from_this_x)+str(from_this_y)
-                to_this = str(to_this_x)+str(to_this_y)
-                for x in range(len(line_list)):
-                    if (line_list[x][0] == from_this or line_list[x][0] == to_this):
-                        lines_temp.append(line_list[x])
-        print(lines_temp)
 
 
 
@@ -213,7 +194,8 @@ class object_item:
         # self.canvas_m1 = tkinter.Canvas(self.top, width=100, height=100)
         #
         # self.canvas_m1.pack(fill="both", expand=1)
-        self.temp_line = None
+        self.temp_line_from = None
+        self.temp_line_to = None
         self.canvas.dnd_accept = self.dnd_accept
 
 
@@ -232,16 +214,29 @@ class object_item:
         x, y = source.where(self.canvas, event)
         x1, y1, x2, y2 = self.canvas.bbox(self.dndid)
         self.canvas.move(self.dndid, x-x1, y-y1)
-        #print("dnd_motion",self.dndid)
-
+        print(x,y,x1,y1,x2,y2)
         # if self.firstx < -1 and self.firsty < -1:
         # self.firstx, self.firsty = event.x, event.y
         # 删除上一次绘制的虚线图形
-        if self.temp_line is not None:
-            self.canvas.delete(self.temp_line)
-        # 重新绘制虚线
-        self.temp_line = self.canvas.create_line(x + 20, y + 20, 200, 150, dash=2, arrow="last")
-        print(self.temp_line)
+
+        if lines_temp_to is not None:
+            for i in range(len(lines_temp_to)):
+                # lines_temp_to[i][2].delete(self.temp_line_from)
+                lines_temp_to[i][2].delete(self.temp_line_to)
+                lines_temp_to[i][2].delete(lines_temp_to[i][3])
+                self.temp_line_to = self.canvas.create_line(x + 20, y + 10, lines_temp_to[i][4],
+                                                         lines_temp_to[i][5], dash=2, arrow="last")
+                if lines_temp_from is not None:
+                    for k in range(len(lines_temp_from)):
+                        lines_temp_from[k][2].delete(self.temp_line_from)
+                        lines_temp_from[k][2].delete(lines_temp_from[k][3])
+                        self.temp_line_from = self.canvas.create_line(lines_temp_from[i][4],
+                                                                      lines_temp_from[i][5], x + 20, y + 10, dash=2,
+                                                                      arrow="last")
+
+        # # 重新绘制虚线
+        # self.temp_line = self.canvas.create_line(x + 20, y + 20, 200, 150, dash=2, arrow="last")
+        # print(self.temp_line)
 
 
     def dnd_leave(self, source, event):
@@ -298,3 +293,19 @@ class relationship:
                 return obj_list[i][3:]
 
 
+    def get_line_group(self,element_id):
+        lines_temp_to.clear()
+        lines_temp_from.clear()
+        print(obj_list)
+        for i in range(len(obj_list)):
+            if (obj_list[i][0] == element_id) and (obj_list[i][1] == 1):
+                this_x = obj_list[i][3] +20
+                this_y = obj_list[i][4] +10
+                for x in range(len(line_list)):
+                    if (line_list[x][4] == this_x and line_list[x][5] == this_y):
+                        lines_temp_from.append(line_list[x])
+                    if (line_list[x][6] == this_x and line_list[x][7] == this_y):
+                        lines_temp_to.append(line_list[x])
+
+        print("from:",lines_temp_from)
+        print("to:",lines_temp_to)
