@@ -42,6 +42,7 @@ class element_sketch:
         button_panel = Frame(self.master)
         button_panel.pack(side=TOP, pady=10)
         # Create source, destination and combination canvas.
+
         self.cv_src = Canvas(button_panel, background='white', width=WIN_WIDTH/2-20, height=WIN_HEIGHT/2-10, bd=2, relief='raised')
         self.cv_src.grid(row=0, column=0)
         self.cv_dest = Canvas(button_panel, background='white', width=WIN_WIDTH/2-20, height=WIN_HEIGHT/2-10, bd=2, relief='sunken')
@@ -81,6 +82,7 @@ def lanch(root_app):
     for k in range(len(target_element)):
         create_objects(target_element[k], app.cv_dest)
 
+
     object_item(root_app, app.cv_src)
     object_item(root_app, app.cv_dest)
     object_item(root_app, app.cv_cmb)
@@ -88,19 +90,18 @@ def lanch(root_app):
     for i in range(len(obj_list)):
         print("created %s:" % str(i), obj_list[i])
 
-    relation_pair.append([0, 2])
-    relation_pair.append([1, 2])
-    relation_pair.append([3, 4])
-    relation_pair.append([3, 5])
+    #TODO: insert a pair of relationship
+    # relation_pair.append([0, 2])
+    # relation_pair.append([1, 2])
+    # relation_pair.append([3, 4])
+    # relation_pair.append([3, 5])
 
-    print("relation:%d", relation_pair)
-    print("object position:%d", obj_position)
 
-    for i in range(len(relation_pair)):
-        if i < 2:
-            tt = relationship(app.cv_src)
-            tt.draw_line(i)
-        else:
-            tt = relationship(app.cv_dest)
-            tt.draw_line(i)
+
+    model_src = relationship(app.cv_src)
+    model_src.draw_line(obj_list[0][0], obj_list[1][0])
+    model_src.draw_line(obj_list[1][0], obj_list[2][0])
+    model_dest = relationship(app.cv_dest)
+    model_dest.draw_line(obj_list[3][0], obj_list[4][0])
+    model_dest.draw_line(obj_list[3][0], obj_list[5][0])
 
