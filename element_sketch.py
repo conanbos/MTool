@@ -17,10 +17,6 @@ class element_sketch:
         # save default width 保存设置初始的边框宽度
         self.width = IntVar()
         self.width.set(1)
-        # save default color 保存设置初始的边框颜色
-        self.outline = 'black'
-        # save default filled color保存设置初始的填充颜色
-        self.fill = None
         # save pre-drag posX,Y 记录拖动时前一个点的x、y坐标
         self.prevx = self.prevy = -10
         # save drag posX,Y 记录拖动开始的第一个点的x、y坐标
@@ -31,10 +27,10 @@ class element_sketch:
         self.item_type = 0
         self.points = []
         self.init_widgets()
-        self.temp_item = None
-        self.temp_items = []
-        # 初始化选中的图形项
-        self.choose_item = None
+        # self.temp_item = None
+        # self.temp_items = []
+        # # 初始化选中的图形项
+        # self.choose_item = None
 
         # 创建界面组件
     def init_widgets(self):
@@ -50,17 +46,13 @@ class element_sketch:
         self.cv_cmb = Canvas(button_panel, background='white', width=WIN_WIDTH-38, height=WIN_HEIGHT / 2-30, bd=2, relief='groove')
         self.cv_cmb.grid(row=1, column=0, columnspan=2)
 
-        # self.cv_src.bind('<B1-Motion>', self.drag_event)
 
-
-    def drag_event(self, event):
-        print('I am here:% %', str(event.x), str(event.y))
 
 
 # crate new object and attach to destination canvas
 def create_objects(name, destination):
     new_obj = object_icon(name)
-    new_obj.attach(destination, random.randrange(1, 500), random.randrange(1, 250))
+    new_obj.attach(destination, random.randrange(1, 450), random.randrange(1, 250))
 
 
 def lanch(root_app):
@@ -72,8 +64,8 @@ def lanch(root_app):
     app = element_sketch(root_app)
     # root.bind('<Delete>', app.delete_item)
     # list of source and target elements, it will be change to read elements from external file or model files.
-    source_element = ["Functional view", "Function", "Exchange"]
-    target_element = ["Primitive", "Port", "Connector"]
+    source_element = ["Functional view", "Function", "Exchange", "Port a", "Port b"]
+    target_element = ["Primitive", "Port", "Connector","Primitive prot"]
 
     # create  elements on source canvas from list source_element
     for i in range(len(source_element)):
@@ -101,7 +93,11 @@ def lanch(root_app):
     model_src = relationship(app.cv_src)
     model_src.draw_line(obj_list[0][0], obj_list[1][0])
     model_src.draw_line(obj_list[1][0], obj_list[2][0])
+    model_src.draw_line(obj_list[1][0],obj_list[3][0])
+    model_src.draw_line(obj_list[2][0], obj_list[4][0])
+
     model_dest = relationship(app.cv_dest)
-    model_dest.draw_line(obj_list[3][0], obj_list[4][0])
-    model_dest.draw_line(obj_list[3][0], obj_list[5][0])
+    model_dest.draw_line(obj_list[5][0], obj_list[6][0])
+    model_dest.draw_line(obj_list[6][0], obj_list[7][0])
+    model_dest.draw_line(obj_list[6][0], obj_list[8][0])
 
