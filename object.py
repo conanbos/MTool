@@ -21,8 +21,6 @@ solid_line = []
 press_element = ''   # clicked element
 
 
-
-
 def dnd_start(source, event):
     h = DndHandler(source, event)
     if h.root:
@@ -85,11 +83,14 @@ class DndHandler:
         if old_target is new_target:
             if old_target:
                 old_target.dnd_motion(source, event)
+                # print(1)
         else:
             if old_target:
+                print("变换canvas")
                 self.target = None
                 old_target.dnd_leave(source, event)
             if new_target:
+                # print(4)
                 new_target.dnd_enter(source, event)
                 self.target = new_target
 
@@ -206,13 +207,14 @@ class object_item:
 
     def dnd_accept(self, source, event):
         return self
-
+###TODO 从这里开始，研究一下怎么不让目标过界，或者过界后如何消除线
     def dnd_enter(self, source, event):
         self.canvas.focus_set() # Show highlight border
         x, y = source.where(self.canvas, event)
         x1, y1, x2, y2 = source.canvas.bbox(source.id)
         dx, dy = x2-x1, y2-y1
         self.dndid = self.canvas.create_rectangle(x, y, x+dx, y+dy)
+        print(self.dndid)
         self.dnd_motion(source, event)
 
 
@@ -221,7 +223,7 @@ class object_item:
         x1, y1, x2, y2 = self.canvas.bbox(self.dndid)
         self.canvas.move(self.dndid, x-x1, y-y1)
 
-        # 删除上一次绘制的虚线图形
+        # delete last dot line 删除上一次绘制的虚线图形
         for i in range(len(self.dot_line)):
             self.canvas.delete(self.dot_line[i])
         self.dot_line.clear()
@@ -233,17 +235,13 @@ class object_item:
             for i in range(len(lines_temp_from)):
                 lines_temp_from[i][2].delete(lines_temp_from[i][3])
         if solid_line:
-            print(len(solid_line))
             for i in range(len(solid_line)):
                 solid_line[i][2].delete(solid_line[i][3])
 
 
-
-
-        # 实时重绘虚线
+        # re-draw dot line in real time 实时重绘虚线
         if lines_temp_to:
             for i in range(len(lines_temp_to)):
-                print("line_to:",x, y, x1, y1, x2, y2)
                 self.temp_line_to = self.canvas.create_line(lines_temp_to[i][4],
                                                              lines_temp_to[i][5], x, y, dash=2, arrow="last")
                 self.dot_line.append(self.temp_line_to)
@@ -253,11 +251,8 @@ class object_item:
                 lines_temp_to[i][2] = self.canvas
 
 
-
-
         if lines_temp_from:
             for i in range(len(lines_temp_from)):
-                print("line_from:", x, y, x1, y1, x2, y2)
                 self.temp_line_from = self.canvas.create_line(x, y,
                                                              lines_temp_from[i][6],lines_temp_from[i][7], dash=2, arrow="last")
                 self.dot_line.append(self.temp_line_from)
@@ -265,9 +260,7 @@ class object_item:
                 self.prev_fy = lines_temp_from[i][5] = y
                 lines_temp_from[i][3] = self.temp_line_from
                 lines_temp_from[i][2] = self.canvas
-
-
-        update_coord(x, y, x2, y2,1,press_element)
+        update_coord(x, y, x2, y2,1,press_element)   #更新元素坐标  #备用打印信息#print("line_from:", x, y, x1, y1, x2, y2)
 
 
 
@@ -277,6 +270,9 @@ class object_item:
         global lines_temp_from
         global obj_list
         global solid_line
+        x1, y1, x2, y2 = self.canvas.bbox(self.dndid)
+        d1=x1-x2
+        d2=y1-y2
         self.canvas.delete(self.dndid)
         self.dndid = None
         # if lines_temp_from:
@@ -292,19 +288,20 @@ class object_item:
 
         # if lines_temp_from:
         for j in range(len(lines_temp_from)):
-            self.lineid = self.canvas.create_line(lines_temp_from[j][4]+20, lines_temp_from[j][5]+10,
-                                                      lines_temp_from[j][6] + 20
-                                                      , lines_temp_from[j][7] + 10, fill="red", width=2,
-                                                      joinstyle="round")
+            print(d1,d2)
+            self.lineid = self.canvas.create_line(lines_temp_from[j][4]-d1/2, lines_temp_from[j][5]-d2/2,
+                                                      lines_temp_from[j][6]
+                                                      , lines_temp_from[j][7], fill="red", width=2,
+                                                      joinstyle="round",arrow="last")
             lines_temp_from[j][3] = self.lineid
 
 
         # # if lines_temp_to:
         for j in range(len(lines_temp_to)):
-            self.lineid = self.canvas.create_line(lines_temp_to[j][4] + 20, lines_temp_to[j][5] + 10,
-                                                      lines_temp_to[j][6]+20
-                                                      , lines_temp_to[j][7]+10, fill="red", width=2,
-                                                      joinstyle="round")
+            self.lineid = self.canvas.create_line(lines_temp_to[j][4], lines_temp_to[j][5],
+                                                      lines_temp_to[j][6]-d1/2
+                                                      , lines_temp_to[j][7]+2, fill="red", width=2,
+                                                      joinstyle="round",arrow="last")
             lines_temp_to[j][3]=self.lineid
         solid_line = lines_temp_from+lines_temp_to
 
@@ -349,8 +346,8 @@ class relationship:
             from_x,from_y,from_x2, from_y2 = self.get_element_coord(src,1)
             to_x, to_y, to_x2, to_y2 = self.get_element_coord(dest,1)
             # 绘制实际的直线
-            line_id=self.canvas.create_line(from_x+20,from_y+10,to_x+20,to_y+10,
-                                          fill="red", width=2, joinstyle="round")
+            line_id=self.canvas.create_line(from_x,from_y,to_x,to_y,
+                                          fill="red", width=2, joinstyle="round", arrow="last")
             # insert new line to obj_list, type=0 :line
             line_list.append([str(from_x)+str(from_y), 0, self.canvas,line_id, from_x, from_y, to_x, to_y])
         else:
