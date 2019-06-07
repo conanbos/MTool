@@ -1,6 +1,8 @@
 from tkinter import *
 # 导入ttk
 from tkinter import ttk
+from tkinter import PhotoImage
+from tkinter import filedialog
 from object import *
 from object import relationship
 from object import object_icon
@@ -10,6 +12,8 @@ import random
 
 WIN_WIDTH = 1080
 WIN_HEIGHT = 600
+CANVAS_WIDTH = 1080
+CANVAS_HEIGHT= 500
 
 class element_sketch:
     def __init__(self, master):
@@ -27,7 +31,9 @@ class element_sketch:
         self.item_type = 0
         self.points = []
         self.init_widgets()
-        # self.temp_item = None
+        self.file_path = ''
+        self.image = ''
+        self.image_id = ''
         # self.temp_items = []
         # # 初始化选中的图形项
         # self.choose_item = None
@@ -39,13 +45,32 @@ class element_sketch:
         button_panel.pack(side=TOP, pady=10)
         # Create source, destination and combination canvas.
 
-        self.cv_src = Canvas(button_panel, background='white', width=WIN_WIDTH/2-20, height=WIN_HEIGHT/2-10, bd=2, relief='raised')
+        self.cv_src = Canvas(button_panel, bg="gray",width=CANVAS_WIDTH/2-20, height=CANVAS_HEIGHT/2-10, bd=2, relief='raised')
         self.cv_src.grid(row=0, column=0)
-        self.cv_dest = Canvas(button_panel, background='white', width=WIN_WIDTH/2-20, height=WIN_HEIGHT/2-10, bd=2, relief='sunken')
-        self.cv_dest.grid(row=0, column=1)
-        self.cv_cmb = Canvas(button_panel, background='white', width=WIN_WIDTH-38, height=WIN_HEIGHT / 2-30, bd=2, relief='groove')
-        self.cv_cmb.grid(row=1, column=0, columnspan=2)
+        # self.image = PhotoImage(file="bg.png")
+        # self.image_id = self.cv_src.create_image(100, 100, image=self.image)
+        # self.cv_src.move(self.image_id, 245, 100)
+        self.cv_src .create_text(10, 10, text='Source model\n', fill='coral', anchor='nw')
 
+        self.cv_dest = Canvas(button_panel, bg='gray', width=CANVAS_WIDTH/2-20, height=CANVAS_HEIGHT/2-10, bd=2, relief='sunken')
+        self.cv_dest.grid(row=0, column=1)
+        self.cv_dest.create_text(10, 10, text='Target model\n', fill='coral', anchor='nw')
+
+        self.cv_cmb = Canvas(button_panel, background='whitesmoke', width=WIN_WIDTH-38, height=WIN_HEIGHT / 2-30, bd=2, relief='groove')
+        self.cv_cmb.grid(row=1, column=0, columnspan=2)
+        self.cv_cmb.create_text(10, 10, text='Combined model\n', fill='coral', anchor='nw')
+
+        self.b_file_xml = ttk.Button(button_panel, text='choose file',
+                   command=self.chose_file)
+
+        # .pack(side=LEFT, ipadx=8, ipady=5, padx=5)
+        self.b_file_xml.grid(row=2,column=0)
+
+        # ttk.Button(button_panel, text='choose xml',
+        #            command=self.chose_file).pack(side=LEFT, ipadx=8, ipady=5, padx=5)
+
+    def chose_file(self):
+        self.file_path = filedialog.askopenfilename()
 
 
 
@@ -53,6 +78,8 @@ class element_sketch:
 def create_objects(name, destination):
     new_obj = object_icon(name)
     new_obj.attach(destination, random.randrange(1, 450), random.randrange(1, 250))
+
+
 
 
 def lanch(root_app):
