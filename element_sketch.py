@@ -1,19 +1,21 @@
 from tkinter import *
 # 导入ttk
 from tkinter import ttk
-from tkinter import PhotoImage
+from tkinter import scrolledtext
 from tkinter import filedialog
 from object import *
 from object import relationship
 from object import object_icon
 from object import object_item
 
+from IOFile import *
+
 import random
 
 WIN_WIDTH = 1080
-WIN_HEIGHT = 600
+WIN_HEIGHT = 680
 CANVAS_WIDTH = 1080
-CANVAS_HEIGHT= 500
+CANVAS_HEIGHT = 500
 
 class element_sketch:
     def __init__(self, master):
@@ -31,9 +33,9 @@ class element_sketch:
         self.item_type = 0
         self.points = []
         self.init_widgets()
-        self.file_path = ''
         self.image = ''
         self.image_id = ''
+        self.text_msg = ''
         # self.temp_items = []
         # # 初始化选中的图形项
         # self.choose_item = None
@@ -42,35 +44,68 @@ class element_sketch:
     def init_widgets(self):
         # Create button panel
         button_panel = Frame(self.master)
-        button_panel.pack(side=TOP, pady=10)
+        button_panel.pack(side=TOP, padx=5,pady=10)
         # Create source, destination and combination canvas.
 
         self.cv_src = Canvas(button_panel, bg="gray",width=CANVAS_WIDTH/2-20, height=CANVAS_HEIGHT/2-10, bd=2, relief='raised')
-        self.cv_src.grid(row=0, column=0)
-        # self.image = PhotoImage(file="bg.png")
-        # self.image_id = self.cv_src.create_image(100, 100, image=self.image)
-        # self.cv_src.move(self.image_id, 245, 100)
+        self.cv_src.grid(row=0, column=0, columnspan=5)
         self.cv_src .create_text(10, 10, text='Source model\n', fill='coral', anchor='nw')
 
         self.cv_dest = Canvas(button_panel, bg='gray', width=CANVAS_WIDTH/2-20, height=CANVAS_HEIGHT/2-10, bd=2, relief='sunken')
-        self.cv_dest.grid(row=0, column=1)
+        self.cv_dest.grid(row=0, column=5,columnspan=5)
         self.cv_dest.create_text(10, 10, text='Target model\n', fill='coral', anchor='nw')
 
         self.cv_cmb = Canvas(button_panel, background='whitesmoke', width=WIN_WIDTH-38, height=WIN_HEIGHT / 2-30, bd=2, relief='groove')
-        self.cv_cmb.grid(row=1, column=0, columnspan=2)
+        self.cv_cmb.grid(row=1, column=0, columnspan=10)
         self.cv_cmb.create_text(10, 10, text='Combined model\n', fill='coral', anchor='nw')
 
-        self.b_file_xml = ttk.Button(button_panel, text='choose file',
-                   command=self.chose_file)
+        # create load source xml button
+        self.load_xml_src = ttk.Button(button_panel, text='load source model',
+                                     command=self.chose_file)
+        self.load_xml_src.grid(row=2, column=0)
 
-        # .pack(side=LEFT, ipadx=8, ipady=5, padx=5)
-        self.b_file_xml.grid(row=2,column=0)
+        # create load target xml button
+        self.load_xml_tar = ttk.Button(button_panel, text='load target model',
+                                       command=self.chose_file)
+        self.load_xml_tar.grid(row=2, column=1)
 
-        # ttk.Button(button_panel, text='choose xml',
-        #            command=self.chose_file).pack(side=LEFT, ipadx=8, ipady=5, padx=5)
+        self.text_msg = Text(button_panel, height=4, bd=2, relief='flat')
+        self.text_msg.grid(row=3, column=0, columnspan=6)
+        self.print_msg("created button")
+
+
+
+
+        #
+        # self.scrolled_text = scrolledtext.ScrolledText(button_panel, state='disable', height=40)
+        # self.scrolled_text.grid(row=3, column=0, columnspan=8)
+        # self.scrolled_text.configure(font='TkFixedFont')
+        # self.text_msg.tag_config('INFO',  font=('New Time', 20, 'bold'),foreground='black')
+        # self.scrolled_text.tag_config('DEBUG', foreground='gray')
+        # self.scrolled_text.tag_config('WARNING', foreground='orange')
+        # self.scrolled_text.tag_config('ERROR', foreground='red')
+        # self.scrolled_text.tag_config('CRITICAL', foreground='red', underline=1)
+
 
     def chose_file(self):
-        self.file_path = filedialog.askopenfilename()
+        file_path = filedialog.askopenfilename(filetypes=[("Model file", " *.xml"), ("Text file", "*.txt")])
+        print(file_path)
+        return file_path
+
+    def print_msg(self, msg):
+        self.msg= msg
+        self.text_msg.insert(END, self.msg)
+
+    def output_xml(self):
+        self.filecontent = []
+        self.filecontent.append(self.cv_src)
+        IO_output_xml('text.xml', 0, self.filecontent)
+
+
+
+
+
+
 
 
 

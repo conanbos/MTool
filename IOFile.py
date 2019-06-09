@@ -1,4 +1,5 @@
 import os
+import xml.sax
 ###TODO InputOutput interface, various xml formats
 def output_file(filename, type, content):
     '''
@@ -19,7 +20,8 @@ def output_file(filename, type, content):
     except:
         pass
 
-def output_xml(filename, type, content=[]):
+def IO_output_xml(filename, type, content=[]):
+    print("save xml")
     return 0
 
 

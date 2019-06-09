@@ -1,17 +1,6 @@
-# if self.item_type == 0:
-#     # 如果第一个点不存在（self.firstx 和 self.firsty都小于0）
-#     if self.firstx < -1 and self.firsty < -1:
-#         self.firstx, self.firsty = event.x, event.y
-#     # 删除上一次绘制的虚线图形
-#     if self.temp_item is not None:
-#         self.cv.delete(self.temp_item)
-#     # 重新绘制虚线
-#     self.temp_item = self.cv.create_line(self.firstx, self.firsty,
-#                                          event.x, event.y, dash=2, arrow=LAST)
-
 
 import tkinter
-import IOFile as fio
+import element_sketch as es
 
 obj_list = []    # list of created objects [name,type,canvas,x,y,x2,y2] type: 1 element
 line_list = []   # list of created line [id(x+y),type,canvas,id,x,y,x2,y2] type:0 line
